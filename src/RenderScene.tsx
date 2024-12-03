@@ -4,7 +4,7 @@ import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { Scene } from "@babylonjs/core/scene";
 import React, { useEffect, useRef } from "react";
-import { createCube } from "./cube";
+import { createHollowCube } from "./cubeHollow";
 
 const RenderScene: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -34,7 +34,7 @@ const RenderScene: React.FC = () => {
     new HemisphericLight("light", new Vector3(0, 1, 0), scene);
 
     // Create and add the cube
-    createCube(scene, 2, [1, 0, 0]); // Red cube of size 2
+    createHollowCube(scene, 2, 1.1, [1, 0, 0]); // Red cube of size 2
 
     // Render loop
     engine.runRenderLoop(() => {
