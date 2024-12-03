@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import reactLogo from './assets/react.svg';
 import Render from './Render';
+import RenderScene from './RenderScene';
 import viteLogo from '/vite.svg';
 
 
@@ -19,7 +20,8 @@ function App() {
         </a>
       </div>
 
-    <Render />
+    {/* <Render /> */}
+    <RenderScene />
 
       <h1>Vite + React</h1> df
       <div className="card">
