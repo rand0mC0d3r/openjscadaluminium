@@ -18,9 +18,9 @@ const RenderScene = ({ children }: { children: any }) => {
     // Add a camera
     const camera = new ArcRotateCamera(
       "camera",
-      Math.PI / 4,
-      Math.PI / 4,
-      10,
+      Math.PI / 2,
+      1,
+      100,
       Vector3.Zero(),
       sceneInstance
     );
