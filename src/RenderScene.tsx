@@ -1,23 +1,19 @@
-import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
-import { Engine } from "@babylonjs/core/Engines/engine";
-import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
-import { Vector3 } from "@babylonjs/core/Maths/math.vector";
-import { Scene } from "@babylonjs/core/scene";
-import React, { useEffect, useRef } from "react";
-import { createHollowCube } from "./cubeHollow";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ArcRotateCamera, Engine, HemisphericLight, Scene, Vector3 } from '@babylonjs/core';
+import { useEffect, useRef, useState } from 'react';
+import { SceneProvider } from './SceneContext';
 
-const RenderScene: React.FC = () => {
+const RenderScene = ({ children }: { children: any }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [engine, setEngine] = useState<Engine | null>(null);
+  const [scene, setScene] = useState<Scene | null>(null);
 
   useEffect(() => {
+    if (!canvasRef.current) return;
+
     const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    // Create Babylon.js engine
-    const engine = new Engine(canvas, true);
-
-    // Create scene
-    const scene = new Scene(engine);
+    const engineInstance = new Engine(canvas, true);
+    const sceneInstance = new Scene(engineInstance);
 
     // Add a camera
     const camera = new ArcRotateCamera(
@@ -26,40 +22,43 @@ const RenderScene: React.FC = () => {
       Math.PI / 4,
       10,
       Vector3.Zero(),
-      scene
+      sceneInstance
     );
     camera.attachControl(canvas, true);
 
-    // Add a light
-    new HemisphericLight("light", new Vector3(0, 1, 0), scene);
+    new HemisphericLight("light", new Vector3(0, 1, 0), sceneInstance);
 
-    // Create and add the cube
-    createHollowCube(scene, 2, 1.1, [1, 0, 0]); // Red cube of size 2
-
-    // Render loop
-    engine.runRenderLoop(() => {
-      scene.render();
+    engineInstance.runRenderLoop(() => {
+      sceneInstance.render();
     });
 
-    // Resize handler
-    window.addEventListener("resize", () => engine.resize());
+    window.addEventListener("resize", () => engineInstance.resize());
 
-    // Cleanup
+    setEngine(engineInstance);
+    setScene(sceneInstance);
+
     return () => {
-      engine.dispose();
-      window.removeEventListener("resize", () => engine.resize());
+      engineInstance.dispose();
+      window.removeEventListener("resize", () => engineInstance.resize());
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        width: "100%",
-        height: "100%",
-        display: "block",
-      }}
-    />
+    <div style={{ width: "100%", height: "100%" }}>
+      <canvas
+        ref={canvasRef}
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "block",
+        }}
+      />
+      {engine && scene && (
+        <SceneProvider engine={engine} scene={scene}>
+          {children}
+        </SceneProvider>
+      )}
+    </div>
   );
 };
 
